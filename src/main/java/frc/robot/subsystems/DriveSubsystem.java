@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -16,6 +17,9 @@ public class DriveSubsystem extends SubsystemBase {
     private final CANSparkMax rightFollower  = new CANSparkMax(DriveConstants.RIGHT_MOTOR_2, MotorType.kBrushless);
 
     private final DifferentialDrive drive;
+
+    private final RelativeEncoder leftEncoder;
+    private final RelativeEncoder rightEncoder;
 
     public DriveSubsystem() {
 
