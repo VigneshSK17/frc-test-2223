@@ -4,9 +4,10 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
-import edu.wpi.first.math.util.Units;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
@@ -80,13 +81,91 @@ public class DriveSubsystem extends SubsystemBase {
 
     /* Autonomous stuff */
 
+    // Resets encoders
     public void resetEncoders() {
         leftEncoder.setPosition(0.0);
         rightEncoder.setPosition(0.0);
     }
 
+    // Resets gyroscope, zeroes heading of robot
     public void resetGyro() {
         gyro.reset();
+    }
+
+    /**
+     *  Returns heading of robot 
+     * 
+     * @return The robot's heading in degrees (-180 to 180)
+     */
+    public double getHeading() {
+        return gyro.getRotation2d().getDegrees();
+    }
+
+    /**
+     * Returns turn rate of robot
+     * 
+     * @return The turn rate of the robot in degrees per second
+     */
+    public double getTurnRate() {
+        return -gyro.getRate();
+    }
+
+    /**
+     * Returns the currently-estimated pose of the robot.
+     *
+     * @return The pose.
+     */
+    public Pose2d getPose() {
+      return odometry.getPoseMeters();
+    }
+
+     /**
+    * Returns the current wheel speeds of the robot.
+    *
+    * @return The current wheel speeds.
+    */
+    public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+      return new DifferentialDriveWheelSpeeds(leftEncoder.getVelocity(), rightEncoder.getVelocity());
+    }
+
+    /**
+     * Resets the odometry to the specified pose.
+     *
+     * @param pose The pose to which to set the odometry.
+     */
+    public void resetOdometry(Pose2d pose) {
+      resetEncoders();
+      odometry.resetPosition(pose, gyro.getRotation2d());
+    }
+
+
+    /**
+     * Controls the left and right sides of the drive directly with voltages.
+     *
+     * @param leftVolts the commanded left output
+     * @param rightVolts the commanded right output
+     */
+    public void driveVolts(double leftVolts, double rightVolts) {
+      leftMain.setVoltage(leftVolts);
+      rightMain.setVoltage(rightVolts);
+      drive.feed();
+    }
+
+    /**
+     * Gets the average distance of the two encoders
+     * 
+     * @return the average of the two encoder readings
+     */
+    public double getAverageEncoderDistance() {
+        return (leftEncoder.getPosition() + rightEncoder.getPosition()) / 2.0;
+    }
+
+    public RelativeEncoder getLeftEncoder() {
+        return leftEncoder;
+    }
+
+    public RelativeEncoder getRightEncoder() {
+        return rightEncoder;
     }
 
 }
