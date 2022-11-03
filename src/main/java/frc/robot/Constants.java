@@ -34,11 +34,11 @@ public final class Constants {
         public static final double MIN_OUTPUT = 0.2;
 
         // Constants
-        private static final double TRACKWIDTH = 0.69;
-        private static final double WHEEL_DIAMETER = Units.inchesToMeters(6);
-        private static final int ENCODER_COUNTS_PER_REVOLUTION = 8096;
+        public static final double TRACKWIDTH = Units.inchesToMeters(20);
+        public static final double WHEEL_DIAMETER = Units.inchesToMeters(6);
+        public static final int ENCODER_COUNTS_PER_REVOLUTION = 8096;
 
-        private static final double ENCODER_DISTANCE_PER_PULSE = 
+        public static final double ENCODER_DISTANCE_PER_PULSE = 
             (WHEEL_DIAMETER * Math.PI) / (double) ENCODER_COUNTS_PER_REVOLUTION;
 
     }
