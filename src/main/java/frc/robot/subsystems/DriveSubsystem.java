@@ -31,7 +31,6 @@ public class DriveSubsystem extends SubsystemBase {
     private final Gyro gyro = new ADXRS450_Gyro();
 
     private final DifferentialDriveOdometry odometry;
-    private final DifferentialDriveKinematics kinematics;
 
     public DriveSubsystem() {
 
@@ -51,7 +50,6 @@ public class DriveSubsystem extends SubsystemBase {
 
         resetEncoders();
         odometry = new DifferentialDriveOdometry(gyro.getRotation2d());
-        kinematics = new DifferentialDriveKinematics(DriveConstants.TRACKWIDTH);
 
         // Creates drive
         drive = new DifferentialDrive(leftMain, rightMain);
