@@ -27,6 +27,21 @@ public final class Constants {
         public static final int RIGHT_MOTOR_1 = 7;
         public static final int RIGHT_MOTOR_2 = 8;
 
+        // Drive motor speeds
+        public static final double MAX_OUTPUT = 0.8;
+        public static final double MIN_OUTPUT = 0.2;
+
+
+    }
+
+    /**
+     * Contains ports for various input and output devices
+     */
+    public static final class IOConstants {
+
+        // Xbox Controller
+        public static final int DRIVER_CONTROLLER_PORT_1 = 0;
+
     }
 
 }
