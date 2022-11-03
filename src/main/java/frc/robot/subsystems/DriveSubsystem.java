@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import java.util.function.DoubleSupplier;
-
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -38,8 +36,14 @@ public class DriveSubsystem extends SubsystemBase {
         drive.arcadeDrive(xSpeed, rotation, true);
     }
 
-    public void drive(double xSpeed, double rotation, DoubleSupplier multiplier) {
-        drive.arcadeDrive(xSpeed * multiplier.getAsDouble(), rotation * multiplier.getAsDouble(), true);
+    // Sets max output for the drivetrain, which is in drive constants
+    public void setToMaxOutput() {
+        drive.setMaxOutput(DriveConstants.MAX_OUTPUT);
+    }
+
+    // Sets the slow mode output for the drivetrain, which is in drive constants
+    public void setToSlowOutput() {
+        drive.setMaxOutput(DriveConstants.MIN_OUTPUT);
     }
 
 }
