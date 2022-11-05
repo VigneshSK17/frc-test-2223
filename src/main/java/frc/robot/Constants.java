@@ -45,13 +45,11 @@ public final class Constants {
             (WHEEL_DIAMETER * Math.PI) / (double) ENCODER_COUNTS_PER_REVOLUTION;
 
         // Voltage
-        // TODO: Find values using Robot Characterization Toolsuite
         public static final double S_VOLTS = 0.22;
         public static final double V_VOLT_SECONDS_PER_METER = 1.98;
         public static final double A_VOLT_SECONDS_SQUARED_PER_METER = 0.2;
 
         // Drive velocity
-        // TODO: Find values using Robot Characterization Toolsuite
         public static final double P_DRIVE_VEL = 8.5;
     }
 
@@ -66,9 +64,13 @@ public final class Constants {
     }
 
     public static final class AutoConstants {
+
+        // Max Trajectory
+        public static final double MAX_SPEED_METERS_PER_SECOND = 3;
+        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 3;
         
         // Ramsete follower values
-        // TODO: Tune these
+        // TODO: Tune these, ok defaults
         public static final double RAMSETE_B = 2;
         public static final double RAMSETE_ZETA = 0.7;
 

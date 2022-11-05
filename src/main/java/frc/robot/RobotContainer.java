@@ -4,12 +4,13 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants.IOConstants;
-import frc.robot.commands.ExampleCommand;
+import frc.robot.auton.MoveForwardAutonCommand;
+import frc.robot.auton.RamseteAutonSetup;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -23,7 +24,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   // Robot subsystems
   private final DriveSubsystem driveSubsystem = new DriveSubsystem();
-  private final ExampleSubsystem exampleSubsystem = new ExampleSubsystem();
 
   // Controller
   private final XboxController controller = new XboxController(IOConstants.DRIVER_CONTROLLER_PORT_1);
@@ -54,11 +54,11 @@ public class RobotContainer {
     // Sets drive subsystem speed if 
     leftTrigger
       .whenActive(
-        () -> driveSubsystem.setToMaxOutput(),
+        () -> driveSubsystem.setToSlowOutput(),
         driveSubsystem
       )
       .whenInactive(
-        () -> driveSubsystem.setToSlowOutput(),
+        () -> driveSubsystem.setToMaxOutput(),
         driveSubsystem
       );
 
@@ -70,7 +70,15 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
-    return new ExampleCommand(exampleSubsystem);
+    final RamseteAutonSetup autonSetup = new RamseteAutonSetup(driveSubsystem);
+    final TrajectoryConfig trajectoryConfig = autonSetup.getTrajectoryConfig();
+
+    final MoveForwardAutonCommand auton = new MoveForwardAutonCommand(autonSetup, trajectoryConfig);
+
+    // Resets odometry to beginning of first path
+    driveSubsystem.resetOdometry(auton.traj0.getInitialPose());
+
+    // Runs ramsete commands, ends by setting drive volts to 0 to stop bot
+    return auton.andThen(() -> driveSubsystem.driveVolts(0, 0));
   }
 }
