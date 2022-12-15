@@ -10,7 +10,7 @@ public class MoveForwardAuton extends SequentialCommandGroup {
     public MoveForwardAuton(DriveSubsystem driveSubsystem) {
 
         addCommands(
-            new RunCommand(() -> driveSubsystem.drive(-0.8, 0), driveSubsystem)
+            new RunCommand(() -> driveSubsystem.drive(0.8, 0), driveSubsystem)
                 .withTimeout(1.0) 
         );
 
