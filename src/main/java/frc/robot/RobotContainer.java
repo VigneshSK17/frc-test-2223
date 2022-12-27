@@ -7,12 +7,15 @@ package frc.robot;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.XboxController.Button;
 import frc.robot.Constants.IOConstants;
 import frc.robot.auton.MoveForwardAutonCommand;
 import frc.robot.auton.RamseteAutonSetup;
+import frc.robot.commands.TurnBotVisionCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
@@ -24,6 +27,10 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   // Robot subsystems
   private final DriveSubsystem driveSubsystem = new DriveSubsystem();
+
+  // Enables the use of Ramsete paths
+  final RamseteAutonSetup autonSetup = new RamseteAutonSetup(driveSubsystem);
+  final TrajectoryConfig trajectoryConfig = autonSetup.getTrajectoryConfig();
 
   // Controller
   private final XboxController controller = new XboxController(IOConstants.DRIVER_CONTROLLER_PORT_1);
@@ -62,6 +69,11 @@ public class RobotContainer {
         driveSubsystem
       );
 
+      // Turns bot to what camera wants to detect when pressed, if it can't detect does nothing
+      new JoystickButton(controller, Button.kA.value).whenPressed(
+        new TurnBotVisionCommand(driveSubsystem, autonSetup, trajectoryConfig)
+      );
+
   }
 
   /**
@@ -70,8 +82,9 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    final RamseteAutonSetup autonSetup = new RamseteAutonSetup(driveSubsystem);
-    final TrajectoryConfig trajectoryConfig = autonSetup.getTrajectoryConfig();
+    // TODO: Uncomment when there is no teleop use case
+    // final RamseteAutonSetup autonSetup = new RamseteAutonSetup(driveSubsystem);
+    // final TrajectoryConfig trajectoryConfig = autonSetup.getTrajectoryConfig();
 
     final MoveForwardAutonCommand auton = new MoveForwardAutonCommand(autonSetup, trajectoryConfig);
 
