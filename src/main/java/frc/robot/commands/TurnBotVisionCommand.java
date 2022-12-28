@@ -24,9 +24,7 @@ public class TurnBotVisionCommand extends SequentialCommandGroup {
     // Angle between horiz and camera (radians)
     final double CAMERA_PITCH = Units.degreesToRadians(0);
 
-    public TurnBotVisionCommand(DriveSubsystem drive, RamseteAutonSetup autonSetup, TrajectoryConfig config) {
-
-        PhotonCamera camera = new PhotonCamera("daZed");
+    public TurnBotVisionCommand(DriveSubsystem drive, PhotonCamera camera, RamseteAutonSetup autonSetup, TrajectoryConfig config) {
 
         PhotonPipelineResult result = camera.getLatestResult();
 

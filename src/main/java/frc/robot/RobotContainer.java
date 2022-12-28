@@ -4,12 +4,14 @@
 
 package frc.robot;
 
+import org.photonvision.PhotonCamera;
+
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import frc.robot.Constants.IOConstants;
-import frc.robot.auton.MoveForwardAutonCommand;
+import frc.robot.auton.BasicVisionAuton;
 import frc.robot.auton.RamseteAutonSetup;
 import frc.robot.commands.TurnBotVisionCommand;
 import frc.robot.subsystems.DriveSubsystem;
@@ -29,8 +31,11 @@ public class RobotContainer {
   private final DriveSubsystem driveSubsystem = new DriveSubsystem();
 
   // Enables the use of Ramsete paths
-  final RamseteAutonSetup autonSetup = new RamseteAutonSetup(driveSubsystem);
-  final TrajectoryConfig trajectoryConfig = autonSetup.getTrajectoryConfig();
+  private final RamseteAutonSetup autonSetup = new RamseteAutonSetup(driveSubsystem);
+  private final TrajectoryConfig trajectoryConfig = autonSetup.getTrajectoryConfig();
+
+  // Photoncamera setup
+  private final PhotonCamera camera = new PhotonCamera("daZed");
 
   // Controller
   private final XboxController controller = new XboxController(IOConstants.DRIVER_CONTROLLER_PORT_1);
@@ -71,7 +76,7 @@ public class RobotContainer {
 
       // Turns bot to what camera wants to detect when pressed, if it can't detect does nothing
       new JoystickButton(controller, Button.kA.value).whenPressed(
-        new TurnBotVisionCommand(driveSubsystem, autonSetup, trajectoryConfig)
+        new TurnBotVisionCommand(driveSubsystem, camera, autonSetup, trajectoryConfig)
       );
 
   }
@@ -86,12 +91,26 @@ public class RobotContainer {
     // final RamseteAutonSetup autonSetup = new RamseteAutonSetup(driveSubsystem);
     // final TrajectoryConfig trajectoryConfig = autonSetup.getTrajectoryConfig();
 
-    final MoveForwardAutonCommand auton = new MoveForwardAutonCommand(autonSetup, trajectoryConfig);
+    //region No Vision Auton
+    // final MoveForwardAutonCommand auton = new MoveForwardAutonCommand(autonSetup, trajectoryConfig);
 
-    // Resets odometry to beginning of first path
-    driveSubsystem.resetOdometry(auton.traj0.getInitialPose());
+    // // Resets odometry to beginning of first path
+    // driveSubsystem.resetOdometry(auton.traj0.getInitialPose());
 
-    // Runs ramsete commands, ends by setting drive volts to 0 to stop bot
-    return auton.andThen(() -> driveSubsystem.driveVolts(0, 0));
+    // // Runs ramsete commands, ends by setting drive volts to 0 to stop bot
+    // return auton.andThen(() -> driveSubsystem.driveVolts(0, 0));
+    //endregion
+
+    //region Vision Auton (w/ default methods)
+
+    BasicVisionAuton auton = new BasicVisionAuton(driveSubsystem, camera, autonSetup, trajectoryConfig);
+
+    // Reset odom to beginning of all paths
+    driveSubsystem.resetOdometry(auton.getStartPose());
+
+    // Runs ramsete command based on what camera detects
+    return auton.genSelectCommand().andThen(() -> driveSubsystem.driveVolts(0, 0));
+
+    //endregion
   }
 }
